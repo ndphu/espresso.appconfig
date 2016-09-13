@@ -31,11 +31,12 @@ type AppConfig struct {
 }
 
 var (
-	confFile = kingpin.Flag("config-file", "Config file").String()
-	keyFile  = kingpin.Flag("key-file", "Google OAuth key file").String()
-	logFile  = kingpin.Flag("log-file", "The path to the log file").String()
-	deviceId = kingpin.Flag("device-id", "Required to use online config").String()
-	skipSSL  = kingpin.Flag("skip-ssl", "Skip SSL verification. Should be used only in test mode").Bool()
+	confFile    = kingpin.Flag("config-file", "Config file").String()
+	keyFile     = kingpin.Flag("key-file", "Google OAuth key file").String()
+	logFile     = kingpin.Flag("log-file", "The path to the log file").String()
+	deviceId    = kingpin.Flag("device-id", "Required to use online config").String()
+	skipSSL     = kingpin.Flag("skip-ssl", "Skip SSL verification. Should be used only in test mode").Bool()
+	firebaseApp = kingpin.Flag("firebase-app", "The Firebase app name").Default("rpictl").String()
 )
 
 func New() *AppConfig {
@@ -69,14 +70,14 @@ func (appConfig *AppConfig) Load() {
 		if *keyFile == "" {
 			panic("Key file is not defined")
 		}
-		appConfig.GetConfigFromFirebase(*deviceId, *keyFile)
+		appConfig.GetConfigFromFirebase(*firebaseApp, *deviceId, *keyFile)
 	} else {
 		log.Printf("Using config file: %s\n", *confFile)
 		appConfig.ParseConfigFile(*confFile)
 	}
 }
 
-func (appConfig *AppConfig) GetConfigFromFirebase(deviceId string, keyFile string) {
+func (appConfig *AppConfig) GetConfigFromFirebase(firebaseApp string, deviceId string, keyFile string) {
 	log.Println("Get config for device id =", deviceId, "from Firebase")
 	client := firebase_helper.NewFirebaseClient(keyFile)
 	if *skipSSL {
@@ -85,7 +86,7 @@ func (appConfig *AppConfig) GetConfigFromFirebase(deviceId string, keyFile strin
 		}
 		client.Transport = tr
 	}
-	body := firebase_helper.GetData(fmt.Sprintf("https://rpictl.firebaseio.com/config/%s", deviceId), client)
+	body := firebase_helper.GetData(fmt.Sprintf("https://%s.firebaseio.com/config/%s", firebaseApp, deviceId), client)
 
 	if fmt.Sprintf("%s", body) == "null" {
 		log.Panicf("Cannot get online config for device %s", deviceId)
