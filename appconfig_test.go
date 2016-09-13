@@ -14,8 +14,7 @@ var (
 func TestGetExistingConfigFromFirebase(t *testing.T) {
 	keyFile, exists := os.LookupEnv("KEY_FILE")
 	if !exists {
-		t.Error("KEY_FILE is undefined")
-		return
+		keyFile = "key.json"
 	}
 
 	expected := appconfig.New()

@@ -1,14 +1,12 @@
 package appconfig
 
 import (
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/ndphu/espresso.helper.firebase"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 )
 
@@ -45,7 +43,6 @@ var (
 	keyFile     = kingpin.Flag("key-file", "Google OAuth key file").String()
 	logFile     = kingpin.Flag("log-file", "The path to the log file").String()
 	deviceId    = kingpin.Flag("device-id", "Required to use online config").String()
-	skipSSL     = kingpin.Flag("skip-ssl", "Skip SSL verification. Should be used only in test mode").Bool()
 	firebaseApp = kingpin.Flag("firebase-app", "The Firebase app name").Default("rpictl").String()
 )
 
@@ -90,14 +87,9 @@ func (appConfig *AppConfig) Load() {
 }
 
 func (appConfig *AppConfig) GetConfigFromFirebase(firebaseApp string, deviceId string, keyFile string) {
-	client := firebase_helper.NewFirebaseClient(keyFile)
-	if *skipSSL {
-		tr := &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		}
-		client.Transport = tr
-	}
-	body := firebase_helper.GetData(fmt.Sprintf("https://%s.firebaseio.com/config/%s", firebaseApp, deviceId), client)
+	//client := firebase_helper.NewFirebaseClient(keyFile)
+	fbClient := firebase_helper.NewFirebaseClient(firebaseApp, keyFile)
+	body := fbClient.GetData(fmt.Sprintf("config/%s", deviceId))
 
 	if fmt.Sprintf("%s", body) == "null" {
 		log.Fatal("Cannot get online config for device %s", deviceId)
