@@ -13,6 +13,15 @@ import (
 )
 
 type ServerConfig struct {
+	MQTT     MQTTConfig
+	Firebase Firebase
+}
+
+type Firebase struct {
+	AppName string
+}
+
+type MQTTConfig struct {
 	Protocol string `json:"protocol"`
 	Host     string `json:"host"`
 	Port     int    `json:"port"`
@@ -25,9 +34,10 @@ type DeviceConfig struct {
 }
 
 type AppConfig struct {
-	Schema string `json:"schema"`
-	Server ServerConfig
-	Device DeviceConfig
+	Schema      string `json:"schema"`
+	Server      ServerConfig
+	Device      DeviceConfig
+	FirebaseApp string
 }
 
 var (
@@ -46,6 +56,7 @@ func New() *AppConfig {
 func (appConfig *AppConfig) Load() {
 	log.Println("Loading arguments...")
 	kingpin.Parse()
+
 	// Initialize log
 	useLogFile := false
 	if *logFile != "" {
@@ -75,6 +86,7 @@ func (appConfig *AppConfig) Load() {
 		log.Printf("Using config file: %s\n", *confFile)
 		appConfig.ParseConfigFile(*confFile)
 	}
+
 }
 
 func (appConfig *AppConfig) GetConfigFromFirebase(firebaseApp string, deviceId string, keyFile string) {
