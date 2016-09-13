@@ -78,7 +78,6 @@ func (appConfig *AppConfig) Load() {
 }
 
 func (appConfig *AppConfig) GetConfigFromFirebase(firebaseApp string, deviceId string, keyFile string) {
-	log.Println("Get config for device id =", deviceId, "from Firebase")
 	client := firebase_helper.NewFirebaseClient(keyFile)
 	if *skipSSL {
 		tr := &http.Transport{
@@ -89,14 +88,10 @@ func (appConfig *AppConfig) GetConfigFromFirebase(firebaseApp string, deviceId s
 	body := firebase_helper.GetData(fmt.Sprintf("https://%s.firebaseio.com/config/%s", firebaseApp, deviceId), client)
 
 	if fmt.Sprintf("%s", body) == "null" {
-		log.Panicf("Cannot get online config for device %s", deviceId)
+		log.Fatal("Cannot get online config for device %s", deviceId)
+	} else {
+		appConfig.ParseConfig([]byte(body))
 	}
-	// if err != nil {
-	// 	// handle error
-	// 	log.Print("Error:", err)
-	// 	os.Exit(1)
-	// }
-	appConfig.ParseConfig([]byte(body))
 }
 
 func (appConfig *AppConfig) ParseConfigFile(confPath string) {
