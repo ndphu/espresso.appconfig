@@ -2,7 +2,6 @@ package appconfig
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/ndphu/espresso.helper.firebase"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"io/ioutil"
@@ -87,14 +86,10 @@ func (appConfig *AppConfig) Load() {
 }
 
 func (appConfig *AppConfig) GetConfigFromFirebase(firebaseApp string, deviceId string, keyFile string) {
-	//client := firebase_helper.NewFirebaseClient(keyFile)
-	fbClient := firebase_helper.NewFirebaseClient(firebaseApp, keyFile)
-	body := fbClient.GetData(fmt.Sprintf("config/%s", deviceId))
-
-	if fmt.Sprintf("%s", body) == "null" {
-		log.Fatal("Cannot get online config for device %s", deviceId)
-	} else {
-		appConfig.ParseConfig([]byte(body))
+	f := firebase_helper.NewFirebaseClient(firebaseApp, keyFile)
+	err := f.GetValueAsStruct("config/"+deviceId, appConfig)
+	if err != nil {
+		panic(err)
 	}
 }
 
