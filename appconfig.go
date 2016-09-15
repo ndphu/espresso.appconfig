@@ -3,7 +3,8 @@ package appconfig
 import (
 	"encoding/json"
 	"github.com/ndphu/espresso.helper.firebase"
-	"gopkg.in/alecthomas/kingpin.v2"
+	//"gopkg.in/alecthomas/kingpin.v2"
+	"github.com/alecthomas/kingpin"
 	"io/ioutil"
 	"log"
 	"os"
