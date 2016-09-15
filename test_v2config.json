@@ -1,0 +1,17 @@
+{
+    "device": {                                                                                                                                                                             
+        "id": "0",                                                                                                                                                                          
+        "name": "test"                                                                                                                                                                      
+    },                                                                                                                                                                                      
+    "schema": "2.0",                                                                                                                                                                        
+    "server": {                                                                                                                                                                             
+        "firebase": {                                                                                                                                                                       
+            "appName": "test-7a4ff"                                                                                                                                                         
+        },                                                                                                                                                                                  
+        "mqtt": {                                                                                                                                                                           
+            "brokerUrl" : "ws://iot.eclipse.org:80/ws",
+            "user" : "someone",
+            "password" : "secret"
+        }                                                                                                                                                                                   
+    }                                                                                                                                                                                       
+}

@@ -20,11 +20,12 @@ type Firebase struct {
 }
 
 type MQTTConfig struct {
-	Protocol string `json:"protocol"`
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	User     string `json:"user"`
-	Password string `json:"password"`
+	Protocol  string `json:"protocol"`
+	Host      string `json:"host"`
+	Port      int    `json:"port"`
+	User      string `json:"user"`
+	Password  string `json:"password"`
+	BrokerUrl string `json:"brokerUrl"`
 }
 
 type DeviceConfig struct {
